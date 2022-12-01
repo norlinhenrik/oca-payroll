@@ -24,6 +24,18 @@ class BaseBrowsableObject(object):
     def __str__(self):
         return str(self.__dict__)
 
+# FROM /odoo/tests/common.py
+import threading
+def get_db_name():
+    db = odoo.tools.config['db_name']
+    # If the database name is not provided on the command-line,
+    # use the one on the thread (which means if it is provided on
+    # the command-line, this will break when installing another
+    # database from XML-RPC).
+    if not db and hasattr(threading.current_thread(), 'dbname'):
+        return threading.current_thread().dbname
+    return db
+
 
 # These classes are used in the _get_payslip_lines() method
 class BrowsableObject(BaseBrowsableObject):
@@ -32,6 +44,16 @@ class BrowsableObject(BaseBrowsableObject):
         self.base_fields += ["employee_id", "env"]
         self.employee_id = employee_id
         self.env = env
+        # import odoo
+        # self.registry = odoo.registry(get_db_name())
+
+        # #: current transaction's cursor
+        # self.cr = self.cursor()
+        # self.addCleanup(self.cr.close)
+
+        # #: :class:`~odoo.api.Environment` for the current test case
+        # self.env = api.Environment(self.cr, self.test_user.id, {}, su=True)
+        # self.addCleanup(self.env.reset)
 
 
 class InputLine(BrowsableObject):

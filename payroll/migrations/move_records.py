@@ -25,6 +25,8 @@ def move_records(cr, legacy):
     )
     openupgrade.logged_query(cr, sql_select_parameters)
     parameters = [(p[0], p[1:] + (payslip_model_id,)) for p in cr.fetchall()]
+    if not parameters:
+        return
 
     sql_insert_parameters = """
     INSERT INTO base_time_parameter (
